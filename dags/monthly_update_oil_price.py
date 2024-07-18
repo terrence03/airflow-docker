@@ -1,0 +1,49 @@
+import sys
+from pathlib import Path
+from datetime import datetime
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+
+
+sys.path.append("/opt/airflow")
+# sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
+from plugins.oil_price.moea import CrudeOilPrice, AvgPrice, CountyPrice
+from plugins.tools import sqlite_tools
+
+db_path = Path("/opt/airflow/data/oilprice.db")
+
+
+dag = DAG(
+    "update_oil_price_monthly",
+    description="Update the oil price data monthly",
+    schedule="35 8 11 * *",
+    start_date=datetime(2024, 6, 15),
+    catchup=False,
+    tags=["oil"],
+)
+
+
+def update_oil_price():
+    crude_oil_price = CrudeOilPrice().get_monthly_data()
+    avg_price = AvgPrice().get_monthly_data()
+    county_price = CountyPrice().get_monthly_data()
+
+    # Save the data to SQLite
+    sqlite_tools.save_data(
+        db_path=db_path, table_name="Monthly.CrudeOil", data=crude_oil_price
+    )
+    sqlite_tools.save_data(db_path=db_path, table_name="Monthly.Avg", data=avg_price)
+    sqlite_tools.save_data(
+        db_path=db_path, table_name="Monthly.County", data=county_price
+    )
+
+    print("Finish")
+
+
+t1 = PythonOperator(
+    task_id="monthly_update_lpg_price",
+    python_callable=update_oil_price,
+    dag=dag,
+)
+
+t1
