@@ -6,7 +6,6 @@ from airflow.operators.python import PythonOperator
 import pandas as pd
 
 sys.path.append("/opt/airflow")
-# sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
 from plugins.oil_price.cpc_fpcc import CpcPrice, FpccPrice
 from plugins.oil_price.moea import CrudeOilPrice, AvgPrice, TownPrice, RefPrice
 from plugins.tools import sqlite_tools

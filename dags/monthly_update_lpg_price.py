@@ -5,9 +5,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 import pandas as pd
 
-
 sys.path.append("/opt/airflow")
-# sys.path.append(R"D:\Projects\airflow-docker")
 from plugins.lpg_price.moea import get_counties_price, get_towns_price
 from plugins.lpg_price.cpc_fpcc import (
     get_cpc_price_adj,

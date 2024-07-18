@@ -1,12 +1,10 @@
-# %%
 import sys
 import json
 from datetime import datetime, timedelta
 import requests
 import pandas as pd
 
-# sys.path.append("/opt/airflow")
-sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
+sys.path.append("/opt/airflow")
 from plugins.tools.period_config import Week, Month
 
 
@@ -551,6 +549,3 @@ class RefPrice:
 
         data = self.__process_data(res)
         return data
-
-
-# %%

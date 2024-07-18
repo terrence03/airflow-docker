@@ -4,9 +4,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 
-
 sys.path.append("/opt/airflow")
-# sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
 from plugins.oil_price.moea import CrudeOilPrice, AvgPrice, CountyPrice
 from plugins.tools import sqlite_tools
 

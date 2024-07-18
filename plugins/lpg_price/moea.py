@@ -1,4 +1,3 @@
-# %%
 import json
 from pathlib import Path
 import requests
@@ -337,6 +336,3 @@ def get_town_price(county: str, payload: dict = None) -> pd.DataFrame:
         ]
     ]
     return table
-
-
-# %%
