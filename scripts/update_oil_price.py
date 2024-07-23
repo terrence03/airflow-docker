@@ -1,17 +1,14 @@
 # %%
 import sys
 from pathlib import Path
-from datetime import datetime
 import pandas as pd
 
-# sys.path.append("/opt/airflow")
 sys.path.append(R"D:\Projects\airflow-docker")
 from plugins.oil_price.cpc_fpcc import CpcPrice, FpccPrice
 from plugins.oil_price.moea import CrudeOilPrice, AvgPrice, TownPrice, RefPrice
 from plugins.tools import sqlite_tools
 
-# db_path = Path("/opt/airflow/data/oilprice.db")
-db_path = Path(R"D:\Projects\airflow-docker\data\oilprice.db")
+db_path = Path(R"Y:\0  資料庫\0  自動更新資料\2. 油價\oilprice.db")
 
 
 def update_cpc_fpcc_oil_price():
@@ -60,6 +57,16 @@ def update_moae_oil_price(week_id: int = None):
 
     print("Finish")
 
+
+def update_daily_crude_oil_price(start: str, end: str):
+    crude_oil_price = CrudeOilPrice().get_daily_data(start, end)
+    sqlite_tools.save_data(
+        db_path=db_path, table_name="Daily.CrudeOil", data=crude_oil_price
+    )
+
+    print("Finish")
+
+
 # %%
-update_moae_oil_price(1278)
+update_daily_crude_oil_price("2024/06/25","2024/07/21")
 # %%

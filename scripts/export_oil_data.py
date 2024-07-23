@@ -1,4 +1,3 @@
-# %%
 import shutil
 import sqlite3
 from pathlib import Path
@@ -7,7 +6,7 @@ from tkinter import messagebox
 import pandas as pd
 
 
-oilprice_db = Path(__file__).parents[1] / "data" / "oilprice.db"
+oilprice_db = Path().cwd / "data" / "oilprice.db"
 oil_data_dst = Path(R"Y:\0  資料庫\0  自動更新資料\2. 油價")
 
 db_tables = {
@@ -27,13 +26,12 @@ db_tables = {
 }
 
 
-def update_oil_data() -> None:
+def export_oil_db() -> None:
     with sqlite3.connect(oilprice_db) as conn:
         for table, name in db_tables.items():
-            print(f"Updating {name}...")
             df = pd.read_sql(f"SELECT * FROM '{table}'", conn)
             df.to_csv(oil_data_dst / f"{name}.csv", index=False, encoding="utf-8-sig")
-            print(f"{name} updated.")
+            print(f"{name} exported.")
 
 
 def copy_oilprice_db() -> None:
@@ -48,10 +46,11 @@ def show_message(message: str) -> None:
     messagebox.showinfo("Message", message)
 
 
-# if __name__ == "__main__":
-#     update_oil_data()
-#     copy_oilprice_db()
-#     show_message("Success")
+def main():
+    export_oil_db()
+    copy_oilprice_db()
+    show_message("Success")
 
 
-# %%
+if __name__ == "__main__":
+    main()
