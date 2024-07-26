@@ -3,6 +3,7 @@ data/
 downloads/
 export/
 logs/
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
