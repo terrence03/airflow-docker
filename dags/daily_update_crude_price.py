@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 import pandas as pd
@@ -34,6 +34,8 @@ t1 = PythonOperator(
     task_id="daily_update_crude_oil_price",
     python_callable=update_crude_oil_price,
     dag=dag,
+    retries=3,
+    retry_delay=timedelta(minutes=30),
 )
 
 t1
