@@ -6,7 +6,7 @@ from tkinter import messagebox
 import pandas as pd
 
 
-oilprice_db = Path().cwd / "data" / "oilprice.db"
+oilprice_db = Path().cwd() / "data" / "oilprice.db"
 oil_data_dst = Path(R"Y:\0  資料庫\0  自動更新資料\2. 油價")
 
 db_tables = {
