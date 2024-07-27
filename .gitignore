@@ -4,7 +4,7 @@ downloads/
 export/
 logs/
 .env
-smtp.cfg
+.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
