@@ -213,7 +213,7 @@ def download_html(url: str, download_dir: str) -> None:
         f.write(html.text)
 
 
-def download_cpc_fpcc_html(download_folder: str) -> None:
+def download_cpc_fpcc_html(download_dir: str) -> None:
     """
     Download the html file from CPC and FPCC website
 
@@ -223,21 +223,21 @@ def download_cpc_fpcc_html(download_folder: str) -> None:
         The directory to save the html file
     """
     today = datetime.today()
-    download_folder_child = Path(download_folder) / f"{today.year}{today.month:02d}"
-    if not download_folder_child.exists():
-        download_folder_child.mkdir(parents=True)
+    download_dir_child = Path(download_dir) / f"{today.year}{today.month:02d}"
+    if not download_dir_child.exists():
+        download_dir_child.mkdir(parents=True)
     download_html(
-        URL["CPC_ADJ"]["url"], f"{download_folder_child}/{URL['CPC_ADJ']['name']}.html"
+        URL["CPC_ADJ"]["url"], f"{download_dir_child}/{URL['CPC_ADJ']['name']}.html"
     )
     download_html(
         URL["CPC_ASIA"]["url"],
-        f"{download_folder_child}/{URL['CPC_ASIA']['name']}.html",
+        f"{download_dir_child}/{URL['CPC_ASIA']['name']}.html",
     )
     download_html(
         URL["CPC_BOARD"]["url"],
-        f"{download_folder_child}/{URL['CPC_BOARD']['name']}.html",
+        f"{download_dir_child}/{URL['CPC_BOARD']['name']}.html",
     )
     download_html(
         URL["FPCC_BOARD"]["url"],
-        f"{download_folder_child}/{URL['FPCC_BOARD']['name']}.html",
+        f"{download_dir_child}/{URL['FPCC_BOARD']['name']}.html",
     )
