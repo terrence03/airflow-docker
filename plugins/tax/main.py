@@ -1,4 +1,3 @@
-# %%
 import os
 import re
 import json
@@ -132,11 +131,3 @@ def write_to_tax_db(db_dir: str, file_dir: str) -> None:
 def download_tax_data_and_write_to_db(download_dir: str, db_dir: str) -> None:
     download_tax_data(download_dir)
     write_to_tax_db(db_dir, download_dir)
-
-
-# %%
-download_tax_data_and_write_to_db(
-    R"D:\Download",
-    R"F:\DataBase\tax_data",
-)
-# %%
