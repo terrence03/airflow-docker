@@ -3,7 +3,6 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-import pandas as pd
 
 sys.path.append("/opt/airflow")
 from plugins.oil_price.moea import CrudeOilPrice
@@ -18,6 +17,11 @@ dag = DAG(
     start_date=datetime(2024, 6, 15),
     catchup=False,
     tags=["oil"],
+    retries=3,
+    retry_delay=timedelta(minutes=30),
+    email=["chienhua.hsu@tri.org.tw"],
+    email_on_failure=True,
+    email_on_retry=False,
 )
 
 
