@@ -10,6 +10,14 @@ from plugins.tax.main import download_tax_data_and_write_to_db
 download_dir = Path("/opt/airflow/downloads")
 db_dir = Path("/opt/airflow/data")
 
+default_args = {
+    "email": ["chienhua.hsu@tri.org.tw"],
+    "email_on_failure": True,
+    "email_on_retry": False,
+    "retries": 2,
+    "retry_delay": timedelta(minutes=30),
+}
+
 dag = DAG(
     "monthly_download_tax_data",
     description="Download the tax data monthly",
@@ -17,11 +25,7 @@ dag = DAG(
     start_date=datetime(2024, 6, 15),
     catchup=False,
     tags=["tax"],
-    retries=3,
-    retry_delay=timedelta(minutes=30),
-    email=["chienhua.hsu@tri.org.tw"],
-    email_on_failure=True,
-    email_on_retry=False,
+    default_args=default_args,
 )
 
 

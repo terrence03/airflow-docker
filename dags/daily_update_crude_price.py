@@ -10,6 +10,14 @@ from plugins.tools import sqlite_tools
 
 db_path = Path("/opt/airflow/data/oilprice.db")
 
+default_args = {
+    "email": ["chienhua.hsu@tri.org.tw"],
+    "email_on_failure": True,
+    "email_on_retry": False,
+    "retries": 2,
+    "retry_delay": timedelta(minutes=30),
+}
+
 dag = DAG(
     "update_crude_price_daily",
     description="Update the crude oil price daily",
@@ -17,11 +25,7 @@ dag = DAG(
     start_date=datetime(2024, 6, 15),
     catchup=False,
     tags=["oil"],
-    retries=3,
-    retry_delay=timedelta(minutes=30),
-    email=["chienhua.hsu@tri.org.tw"],
-    email_on_failure=True,
-    email_on_retry=False,
+    default_args=default_args,
 )
 
 

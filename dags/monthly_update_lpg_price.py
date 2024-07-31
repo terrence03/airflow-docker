@@ -19,6 +19,14 @@ from plugins.tools import sqlite_tools
 db_path = Path("/opt/airflow/data/lpgprice.db")
 # db_path = Path(R"D:\Projects\airflow-docker\data\lpgprice.db")
 
+default_args = {
+    "email": ["chienhua.hsu@tri.org.tw"],
+    "email_on_failure": True,
+    "email_on_retry": False,
+    "retries": 2,
+    "retry_delay": timedelta(minutes=30),
+}
+
 dag = DAG(
     "update_lpg_price_monthly",
     description="Update the LPG price data monthly",
@@ -26,11 +34,7 @@ dag = DAG(
     start_date=datetime(2024, 6, 15),
     catchup=False,
     tags=["lpg"],
-    retries=3,
-    retry_delay=timedelta(minutes=30),
-    email=["chienhua.hsu@tri.org.tw"],
-    email_on_failure=True,
-    email_on_retry=False,
+    default_args=default_args,
 )
 
 
