@@ -1,0 +1,38 @@
+{
+    "BGMOPEN1": {
+        "info": "https://data.gov.tw/dataset/9400",
+        "file_url": "https://eip.fia.gov.tw/data/BGMOPEN1.zip",
+        "data_name": "稅籍登記資料(營業中)",
+        "table_name": "1-營業中"
+    },
+    "BGMOPEN1X": {
+        "info": "https://data.gov.tw/dataset/75140",
+        "file_url": "https://eip.fia.gov.tw/data/BGMOPEN1X.csv",
+        "data_name": "稅籍登記資料(停業中)",
+        "table_name": "2-停業中"
+    },
+    "BGMOPEN1Y": {
+        "info": "https://data.gov.tw/dataset/75141",
+        "file_url": "https://eip.fia.gov.tw/data/BGMOPEN1Y.csv",
+        "data_name": "稅籍登記資料(非營業中)",
+        "table_name": "3-非營業中"
+    },
+    "BGMOPEN99": {
+        "info": "https://data.gov.tw/dataset/34147",
+        "file_url": "https://eip.fia.gov.tw/data/BGMOPEN99.csv",
+        "data_name": "非營利事業機關團體資料集",
+        "table_name": "4-非營利事業"
+    },
+    "BGMOPEN99X": {
+        "info": "https://data.gov.tw/dataset/75136",
+        "file_url": "https://eip.fia.gov.tw/data/BGMOPEN99X.csv",
+        "data_name": "全國各級學校統一編號資料集",
+        "table_name": "6-各級學校"
+    },
+    "BGMOPEN88": {
+        "info": "https://data.gov.tw/dataset/44806",
+        "file_url": "https://www.fia.gov.tw/download/9bc4de1485014443b518beb37d8f35fe",
+        "data_name": "行政院所屬各機關同意開放統一編號資料集",
+        "table_name": "5-政府機關"
+    }
+}

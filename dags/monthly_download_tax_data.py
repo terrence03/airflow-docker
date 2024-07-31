@@ -1,0 +1,41 @@
+import sys
+from pathlib import Path
+from datetime import datetime, timedelta
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+
+sys.path.append("/opt/airflow")
+from plugins.tax.main import download_tax_data_and_write_to_db
+
+download_dir = Path("/opt/airflow/downloads")
+db_dir = Path("/opt/airflow/data")
+
+dag = DAG(
+    "monthly_download_tax_data",
+    description="Download the tax data monthly",
+    schedule="0 17 1 * *",
+    start_date=datetime(2024, 6, 15),
+    catchup=False,
+    tags=["tax"],
+    retries=3,
+    retry_delay=timedelta(minutes=30),
+    email=["chienhua.hsu@tri.org.tw"],
+    email_on_failure=True,
+    email_on_retry=False,
+)
+
+
+def download_tax_data():
+    download_tax_data_and_write_to_db(download_dir, db_dir)
+    print("Finish")
+
+
+t1 = PythonOperator(
+    task_id="monthly_download_tax_data",
+    python_callable=download_tax_data,
+    dag=dag,
+    retries=3,
+    retry_delay=timedelta(minutes=30),
+)
+
+t1
