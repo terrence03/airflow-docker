@@ -114,18 +114,18 @@ def write_to_tax_db(db_dir: str, file_dir: str) -> None:
     crawler = TaxDataCrawler()
     db_path = crawler.copy_sqlite(db_dir)
     for file in Path(file_dir).iterdir():
-        if (file.name in crawler.conf.keys()) and (file.suffix == ".csv"):
+        if (file.stem in crawler.conf.keys()) and (file.suffix == ".csv"):
             with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()
-                with open(file, "r", newline="") as f:
+                with open(file, "r", newline="", encoding="utf-8") as f:
                     reader = csv.reader(f)
                     columns = next(reader)
                     cursor.executemany(
-                        f"INSERT INTO {crawler.conf[file.name]['table_name']} VALUES ({', '.join(['?' for _ in columns])})",
+                        f"INSERT INTO '{crawler.conf[file.stem]['table_name']}' VALUES ({', '.join(['?' for _ in columns])})",
                         reader,
                     )
                     conn.commit()
-            print(f"{file} {crawler.name_dict[file.stem]} saved to database")
+            print(f"{file} {crawler.conf[file.stem]["table_name"]} saved to database")
 
 
 def download_tax_data_and_write_to_db(download_dir: str, db_dir: str) -> None:
