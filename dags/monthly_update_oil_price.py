@@ -19,7 +19,7 @@ default_args = {
 }
 
 dag = DAG(
-    "monthly oil price update",
+    "monthly_oil_price_update",
     description="Update the oil price data monthly",
     schedule="35 8 11 * *",
     start_date=datetime(2024, 6, 15),
@@ -47,7 +47,7 @@ def update_oil_price():
 
 
 t1 = PythonOperator(
-    task_id="monthly_update_lpg_price",
+    task_id="monthly_oil_price_update",
     python_callable=update_oil_price,
     dag=dag,
     retries=3,

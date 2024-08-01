@@ -19,7 +19,7 @@ default_args = {
 }
 
 dag = DAG(
-    "monthly download tax data",
+    "monthly_download_tax_data",
     description="Download the tax data monthly",
     schedule="0 17 1 * *",
     start_date=datetime(2024, 6, 15),

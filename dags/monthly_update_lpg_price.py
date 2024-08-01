@@ -28,7 +28,7 @@ default_args = {
 }
 
 dag = DAG(
-    "monthly lpg price update",
+    "monthly_lpg_price_update",
     description="Update the LPG price data monthly",
     schedule="30 8 2 * *",
     start_date=datetime(2024, 6, 15),
