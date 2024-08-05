@@ -223,7 +223,7 @@ def download_cpc_fpcc_html(download_dir: str) -> None:
         The directory to save the html file
     """
     today = datetime.today()
-    download_dir_child = Path(download_dir) / f"{today.year}{today.month:02d}"
+    download_dir_child = Path(download_dir) / "lpg_source_html" /f"{today.year}{today.month:02d}"
     if not download_dir_child.exists():
         download_dir_child.mkdir(parents=True)
     download_html(
