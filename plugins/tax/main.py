@@ -86,7 +86,7 @@ class TaxDataCrawler:
         ) as csv_file:
             reader = csv.reader(csv_file)
             writer = csv.writer(temp_file)
-            writer.writerow(next(reader)) # write header
+            writer.writerow(next(reader))  # write header
             second_row = next(reader)
             if second_row and second_row[-1].strip() != "":
                 writer.writerow(second_row)
@@ -97,9 +97,9 @@ class TaxDataCrawler:
         print(f"{csv_file_path} processed")
 
 
-def download_tax_data(download_dir: str) -> None:
+def download_tax_data(download_dir: str) -> Path:
     today = datetime.today()
-    download_dir_child = Path(download_dir) / "tax" /f"{today.year}{today.month:02d}"
+    download_dir_child = Path(download_dir) / "tax" / f"{today.year}{today.month:02d}"
     if not download_dir_child.exists():
         download_dir_child.mkdir(parents=True)
     crawler = TaxDataCrawler()
@@ -108,6 +108,7 @@ def download_tax_data(download_dir: str) -> None:
     for file in download_dir_child.iterdir():
         if (file.name in crawler.conf.keys()) and (file.suffix == ".csv"):
             crawler.process_csv(file)
+    return download_dir_child
 
 
 def write_to_tax_db(db_dir: str, file_dir: str) -> None:
@@ -129,5 +130,5 @@ def write_to_tax_db(db_dir: str, file_dir: str) -> None:
 
 
 def download_tax_data_and_write_to_db(download_dir: str, db_dir: str) -> None:
-    download_tax_data(download_dir)
-    write_to_tax_db(db_dir, download_dir)
+    download_dir_child = download_tax_data(download_dir)
+    write_to_tax_db(db_dir, download_dir_child)
