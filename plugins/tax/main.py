@@ -99,7 +99,7 @@ class TaxDataCrawler:
 
 def download_tax_data(download_dir: str) -> None:
     today = datetime.today()
-    download_dir_child = Path(download_dir) / f"{today.year}{today.month:02d}" / "tax"
+    download_dir_child = Path(download_dir) / "tax" /f"{today.year}{today.month:02d}"
     if not download_dir_child.exists():
         download_dir_child.mkdir(parents=True)
     crawler = TaxDataCrawler()
