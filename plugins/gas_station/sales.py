@@ -1,4 +1,3 @@
-# %%
 import re
 import random
 from pathlib import Path
@@ -6,6 +5,7 @@ import requests
 from requests import Session
 from requests.models import Response
 import pandas as pd
+import openpyxl
 from bs4 import BeautifulSoup
 
 
@@ -122,114 +122,90 @@ class Crawler:
         with open(name, "wb") as f:
             f.write(r.content)
 
-    def download_latest(self, download_dir: str) -> None:
+    def download_latest(self, download_dir: str) -> str:
         last_link = list(self.get_links().items())[0]
-        self.__download(last_link[1], Path(download_dir) / last_link[0])
+        download_path = Path(download_dir) / last_link[0]
+        self.__download(last_link[1], download_path)
+        return download_path.as_posix()
 
-    def download_by_year_month(self, year: int, month: int, download_dir: str) -> None:
+    def download_by_year_month(self, year: int, month: int, download_dir: str) -> str:
         last_link = list(self.get_link_by_year_month(year, month).items())[0]
-        self.__download(last_link[1], Path(download_dir) / last_link[0])
+        download_path = Path(download_dir) / last_link[0]
+        self.__download(last_link[1], download_path)
+        return download_path.as_posix()
 
 
-# %%
 class DataFlow:
     def __init__(self) -> None:
         pass
 
     def read_xlsx_a(self, file_path: str) -> pd.DataFrame:
-        return pd.read_excel(
+        data = pd.read_excel(
             file_path,
             sheet_name="銷售統計表",
             skiprows=3,
             skipfooter=1,
             usecols=[0, 1, 2, 3, 4, 5],
         )
+        year, month = self.__get_year_month(file_path)
+        return self.__process_data_a(data, year, month)
 
     def read_xlsx_b(self, file_path: str) -> pd.DataFrame:
-        return pd.read_excel(
+        data = pd.read_excel(
             file_path,
             sheet_name="銷售分析表",
             skiprows=4,
             skipfooter=1,
             usecols=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         )
+        year, month = self.__get_year_month(file_path)
+        return self.__process_data_b(data, year, month)
 
-    def process_file(self, file_path: str) -> tuple[pd.DataFrame]:
-        """讀取檔案"""
-        year = int(re.search(r"(\d+)年", file_path).group(1)) + 1911
-        month = int(re.search(r"(\d+)月份", file_path).group(1))
-        try:
-            data_1 = pd.read_excel(
-                file_path,
-                sheet_name="銷售統計表",
-                skiprows=3,
-                skipfooter=1,
-                usecols=[0, 1, 2, 3, 4, 5],
-            )
-            data_1.insert(0, "年", year)
-            data_1.insert(1, "月", month)
-            data_1 = data_1[data_1["縣市別"] != "合　計"]
-            data_1.columns = [
-                "年",
-                "月",
-                "縣市別",
-                "站數",
-                "汽油",
-                "柴油",
-                "合計",
-                "公秉／日‧站",
-            ]
+    def __get_year_month(self, file_path: str) -> tuple[int, int]:
+        wb = openpyxl.load_workbook(file_path, read_only=True)
+        info = wb.active.cell(row=2, column=1).value
+        info = re.findall(r"\d+", info)
+        year = int(info[0]) + 1911
+        month = int(info[1])
+        return year, month
 
-            data_2 = pd.read_excel(
-                file_path,
-                sheet_name="銷售分析表",
-                skiprows=4,
-                skipfooter=1,
-                usecols=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-            )
-            data_2.rename(columns={"Unnamed: 0": "縣市別"}, inplace=True)
-            data_2.insert(0, "年", year)
-            data_2.insert(1, "月", month)
-            data_2 = data_2[data_2["縣市別"] != "合　計"]
-            data_2.columns = [
-                "年",
-                "月",
-                "縣市別",
-                "5以下",
-                "5.1~10",
-                "10.1~15",
-                "15.1~20",
-                "20.1~25",
-                "25.1~30",
-                "30以上",
-                "合計",
-            ]
+    def __process_data_a(
+        self, data: pd.DataFrame, year: int, month: int
+    ) -> pd.DataFrame:
+        data.insert(0, "年", year)
+        data.insert(1, "月", month)
+        data = data[data["縣市別"] != "合　計"]
+        data.columns = [
+            "year",
+            "month",
+            "county",
+            "station_num",
+            "gasoline_sales",
+            "diesel_sales",
+            "total_sales",
+            "L/day/station",
+        ]
+        return data
 
-            return data_1, data_2
-        except ValueError:
-            print(f"{file_path}資料有誤")
-
-
-# %%
-def download_file() -> tuple[list]:
-    """Download excel file from url"""
-    save_dir = Path(
-        R"Y:\0  資料庫\0  自動更新資料\5. 各縣市汽車加油站汽柴油銷售統計表_每月"
-    )
-    new_file_urls, new_file_names = find_new_file_urls_and_names()
-
-    if not new_file_urls:
-        print("無新檔案")
-        return
-
-    print(f"發現{len(new_file_urls)}個新檔案")
-    print("開始下載檔案")
-    for file_url, file_name in zip(new_file_urls, new_file_names):
-        r = requests.get(
-            f"https://www.moeaea.gov.tw/ECW/populace/content/{file_url}",
-            allow_redirects=True,
-            timeout=10,
-        )
-        with open(save_dir / file_name, "wb") as f:
-            f.write(r.content)
-    print(f"檔案已下載至: '{save_dir}'")
+    def __process_data_b(
+        self, data: pd.DataFrame, year: int, month: int
+    ) -> pd.DataFrame:
+        data.rename(columns={"Unnamed: 0": "縣市別"}, inplace=True)
+        data.insert(0, "年", year)
+        data.insert(1, "月", month)
+        data = data[data["縣市別"] != "合　計"]
+        data.columns = [
+            "year",
+            "month",
+            "county",
+            "<5",
+            "5.1~10",
+            "10.1~15",
+            "15.1~20",
+            "20.1~25",
+            "25.1~30",
+            "30.1~40",
+            ">40.1",
+            "total",
+        ]
+        return data
