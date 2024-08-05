@@ -32,10 +32,12 @@ dag = DAG(
 def update_crude_oil_price():
     crude_oil_price = CrudeOilPrice()
     data = crude_oil_price.get_daily_data()
-    # Save the data to SQLite
-    sqlite_tools.save_data(db_path=db_path, table_name="Daily.CrudeOil", data=data)
-
-    print("Finish")
+    if data:
+        # Save the data to SQLite
+        sqlite_tools.save_data(db_path=db_path, table_name="Daily.CrudeOil", data=data)
+        print("Data saved")
+    else:
+        print("No data")
 
 
 t1 = PythonOperator(
