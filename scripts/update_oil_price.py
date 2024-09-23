@@ -66,7 +66,7 @@ def update_daily_crude_oil_price(start: str, end: str):
 
     print("Finish")
 
-
-# %%
-update_daily_crude_oil_price("2024/06/25","2024/07/21")
-# %%
+df = CrudeOilPrice().get_weekly_data(1280,1280)
+sqlite_tools.save_data(
+    db_path=db_path, table_name="Weekly.CrudeOil", data=df
+)
