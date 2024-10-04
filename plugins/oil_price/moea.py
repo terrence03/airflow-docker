@@ -68,7 +68,7 @@ class CrudeOilPrice:
         else:
             return None
 
-    def get_daily_data(self, start_date: str = None, end_date: str = None):
+    def get_daily_data(self, start_date: str, end_date: str = None):
         if all([start_date, end_date]):
             _data = self.__get_data(unit="day", start=start_date, end=end_date)
         elif start_date:
@@ -91,21 +91,27 @@ class CrudeOilPrice:
             return None
 
     def get_weekly_data(
-        self, start_week_id: int = None, end_week_id: int = None
+        self, start_week_id: int, end_week_id: int = None
     ) -> pd.DataFrame:
         if all([start_week_id, end_week_id]):
             _data = self.__get_data(unit="week", start=start_week_id, end=end_week_id)
+            week_id = range(start_week_id, end_week_id + 1)
+        elif start_week_id:
+            _data = self.__get_data(unit="week", start=start_week_id, end=start_week_id)
+            week_id = [start_week_id]
         else:
             week = Week()
             start_week_id = end_week_id = week.get_week_id() - 1
             _data = self.__get_data(unit="week", start=start_week_id, end=end_week_id)
+            week_id = [start_week_id]
+        _data = _data.drop_duplicates(subset=["SurDate"], keep="first")
         _data["week_start"] = _data["SurDate"].map(
             lambda x: x.split(" ~ ")[0].replace("/", "-")
         )
         _data["week_end"] = _data["SurDate"].map(
             lambda x: x.split(" ~ ")[1].replace("/", "-")
         )
-        _data["week_id"] = range(start_week_id, end_week_id + 1)
+        _data["week_id"] = week_id
         _data.drop(columns=["SurDate"], inplace=True)
         return _data
 

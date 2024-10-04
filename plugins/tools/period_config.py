@@ -207,6 +207,22 @@ class Week:
         week_id = base_week_id + date_diff.days // 7
         return week_id
 
+    def id_to_date(self, week_id: int) -> tuple[datetime, datetime]:
+        base_week = datetime(2003, 1, 5).date()
+        base_week_id = 158
+        date_diff = (week_id - base_week_id) * 7
+        start = base_week + timedelta(days=date_diff)
+        end = start + timedelta(days=6)
+        return start, end
+    
+    def date_to_id(self, date: datetime) -> int:
+        base_week = datetime(2003, 1, 5).date()
+        base_week_id = 158
+        date_diff = date.date() - base_week
+        week_id = base_week_id + date_diff.days // 7
+        return week_id
+
+
     def get_week_dates(self, date: datetime = None) -> list[datetime]:
         if date is None:
             date = datetime.today()

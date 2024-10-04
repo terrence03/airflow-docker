@@ -1,9 +1,3 @@
-"""
-Author       : chienhua.hsu@tri.org.tw
-Update Date  : 2024/02/17
-Description  : This module provides functions to format data.
-"""
-# %%
 from decimal import Decimal, ROUND_HALF_UP
 
 
@@ -93,6 +87,3 @@ def format_simbol(x: float | str) -> str:
             return f"▼ {x}".replace("-", "")
         else:
             return f"▲ {x}"
-
-
-# %%
