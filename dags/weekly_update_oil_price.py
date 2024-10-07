@@ -16,8 +16,8 @@ default_args = {
     "email": ["chienhua.hsu@tri.org.tw"],
     "email_on_failure": True,
     "email_on_retry": False,
-    "retries": 2,
-    "retry_delay": timedelta(minutes=30),
+    "retries": 1,
+    "retry_delay": timedelta(day=1),
 }
 
 dag = DAG(

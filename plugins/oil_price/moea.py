@@ -68,7 +68,7 @@ class CrudeOilPrice:
         else:
             return None
 
-    def get_daily_data(self, start_date: str, end_date: str = None):
+    def get_daily_data(self, start_date: str = None, end_date: str = None):
         if all([start_date, end_date]):
             _data = self.__get_data(unit="day", start=start_date, end=end_date)
         elif start_date:
@@ -91,7 +91,7 @@ class CrudeOilPrice:
             return None
 
     def get_weekly_data(
-        self, start_week_id: int, end_week_id: int = None
+        self, start_week_id: int = None, end_week_id: int = None
     ) -> pd.DataFrame:
         if all([start_week_id, end_week_id]):
             _data = self.__get_data(unit="week", start=start_week_id, end=end_week_id)
