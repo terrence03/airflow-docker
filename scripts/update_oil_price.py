@@ -64,7 +64,14 @@ def update_weekly_moae_oil_price(db_path, week_id: int = None):
     print("Finish")
 
 
-def update_daily_crude_oil_price(db_path, start: str, end: str):
+def update_weekly_ref_oil_price(db_path, start: str = None, end: str = None):
+    ref_price = RefPrice().get_weekly_data(start, end)
+    sqlite_tools.save_data(db_path=db_path, table_name="Weekly.Ref", data=ref_price)
+
+    print("Finish")
+
+
+def update_daily_crude_oil_price(db_path, start: str = None, end: str = None):
     crude_oil_price = CrudeOilPrice().get_daily_data(start, end)
     sqlite_tools.save_data(
         db_path=db_path, table_name="Daily.CrudeOil", data=crude_oil_price
@@ -82,10 +89,11 @@ def update_weekly_crude_oil_price(db_path, start: int, end: int):
     print("Finish")
 
 
-
 # %%
-db_path = Path(R"D:\OneDrive\WORK\Projects\monthly-oil-market-report\data\oilprice.db")
+# db_path = Path(R"D:\OneDrive\WORK\Projects\monthly-oil-market-report\data\oilprice.db")
 
-update_daily_crude_oil_price(db_path, "2024/09/20", "2024/10/02")
-update_weekly_crude_oil_price(db_path, 1290, 1290)
-update_weekly_moae_oil_price(db_path, 1290)
+# update_daily_crude_oil_price(db_path, "2024/10/09", "2024/10/13")
+# update_weekly_crude_oil_price(db_path, 1290, 1290)
+# update_weekly_moae_oil_price(db_path, 1292)
+# update_weekly_ref_oil_price(db_path, "2024/09/23")
+# %%

@@ -546,6 +546,8 @@ class RefPrice:
     ) -> pd.DataFrame:
         if all([start_date, end_date]):
             res = self.__get_data(start_date=start_date, end_date=end_date)
+        elif start_date:
+            res = self.__get_data(start_date=start_date, end_date=start_date)
         else:
             week = Week()
             start_date, end_date = week.get_week_range()
