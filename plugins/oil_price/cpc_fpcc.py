@@ -37,6 +37,7 @@ class CpcPrice:
         date_pattern = re.compile(r"\d{4}/\d{2}/\d{2}")
         update_date = soup.select_one("#Label_Date").text
         update_date = date_pattern.search(update_date).group()
+        update_date = datetime.strptime(update_date, r"%Y/%m/%d").strftime(r"%Y-%m-%d")
 
         table = soup.find("table", {"id": "MyGridView"})
         data = pd.read_html(StringIO(str(table)))[0]
@@ -61,7 +62,7 @@ class CpcPrice:
     def get_asia_price(self) -> list[dict]:
         soup = self.get_soup(self.url["asia"])
         update_date = soup.select_one("#lbl_date").text
-        update_date = datetime.strptime(update_date, r"%Y/%m/%d").strftime(r"%Y/%m/%d")
+        update_date = datetime.strptime(update_date, r"%Y/%m/%d").strftime(r"%Y-%m-%d")
 
         table1 = soup.find("table", {"id": "MyGridView"})
         table2 = soup.find("table", {"id": "MyGridView0"})
@@ -111,7 +112,9 @@ class CpcPrice:
         table = soup.find_all("table")[1]
         rows = table.find_all("tr")[2:]
         last_week = soup.select_one("#ShowDate1").text
+        last_week = datetime.strptime(last_week, r"%Y/%m/%d").strftime(r"%Y-%m-%d")
         this_week = soup.select_one("#ShowDate2").text
+        this_week = datetime.strptime(this_week, r"%Y/%m/%d").strftime(r"%Y-%m-%d")
 
         cols = [
             "oil",
@@ -132,9 +135,10 @@ class CpcPrice:
             for i, col in enumerate(row.find_all("th")):
                 row_data[cols[i]] = col.text.replace("\n", "").replace("\xa0", "")
                 try:
-                    row_data[cols[i]] = float(row_data[cols[i]])
+                    row_data[cols[i]] = float(row_data[cols[i]].replace(",", ""))
                 except ValueError:
                     pass
+
             data.append(row_data)
         return data
 
@@ -160,6 +164,12 @@ class CpcPrice:
                 data[value] = float(data[value])
             except ValueError:
                 pass
+        data["last_week"] = (
+            data["last_week"].replace("-", "~").replace("/", "-").replace(" ", "")
+        )
+        data["this_week"] = (
+            data["this_week"].replace("-", "~").replace("/", "-").replace(" ", "")
+        )
         data["change"] = str(data["change"]) + "%"
         return [data]
 
@@ -190,7 +200,7 @@ class FpccPrice:
         wholesale = soup.find_all("div", attrs={"class": "price-block"})[1]
         update_date = retail.find("p").get_text("\n", "<br>").split(" ")[1]
         update_date = datetime.strptime(update_date, r"%Y年%m月%d日").strftime(
-            r"%Y/%m/%d"
+            r"%Y-%m-%d"
         )
 
         retail_92 = float(retail.find_all("h2")[0].text.strip("$"))
