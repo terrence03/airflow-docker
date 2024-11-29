@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 
 sys.path.append("/opt/airflow")
-from plugins.tax.main import download_tax_data_and_write_to_db
+from plugins.tax.main import download_tax_data
 
 download_dir = Path("/opt/airflow/downloads")
 db_dir = Path("/opt/airflow/data")
@@ -29,8 +29,8 @@ dag = DAG(
 )
 
 
-def download_tax_data():
-    download_tax_data_and_write_to_db(download_dir, db_dir)
+def download():
+    download_tax_data(download_dir)
     print("Finish")
 
 

@@ -129,6 +129,6 @@ def write_to_tax_db(db_dir: str, file_dir: str) -> None:
             print(f"{file} {crawler.conf[file.stem]["table_name"]} saved to database")
 
 
-def download_tax_data_and_write_to_db(download_dir: str, db_dir: str) -> None:
-    download_dir_child = download_tax_data(download_dir)
-    write_to_tax_db(db_dir, download_dir_child)
+# def download_tax_data_and_write_to_db(download_dir: str, db_dir: str) -> None:
+#     download_dir_child = download_tax_data(download_dir)
+#     write_to_tax_db(db_dir, download_dir_child)
