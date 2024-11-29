@@ -92,7 +92,7 @@ def update_weekly_crude_oil_price(db_path, start: int, end: int):
 # %%
 # db_path = Path(R"D:\OneDrive\WORK\Projects\monthly-oil-market-report\data\oilprice.db")
 
-# update_daily_crude_oil_price(db_path, "2024/10/09", "2024/10/13")
+# update_daily_crude_oil_price(db_path, "2024/11/05", "2024/11/06")
 # update_weekly_crude_oil_price(db_path, 1290, 1290)
 # update_weekly_moae_oil_price(db_path, 1292)
 # update_weekly_ref_oil_price(db_path, "2024/09/23")
