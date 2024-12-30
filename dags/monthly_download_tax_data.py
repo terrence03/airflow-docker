@@ -36,7 +36,7 @@ def download():
 
 t1 = PythonOperator(
     task_id="monthly_download_tax_data",
-    python_callable=download_tax_data,
+    python_callable=download,
     dag=dag,
 )
 
