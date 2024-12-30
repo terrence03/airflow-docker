@@ -50,5 +50,4 @@ task = PythonOperator(
     dag=dag,
 )
 
-
 task

@@ -32,8 +32,6 @@ t1 = PythonOperator(
     task_id="daily_gas_station_namelist_update",
     python_callable=main,
     dag=dag,
-    retries=3,
-    retry_delay=timedelta(minutes=30),
 )
 
 t1

@@ -50,8 +50,6 @@ t1 = PythonOperator(
     task_id="monthly_oil_price_update",
     python_callable=update_oil_price,
     dag=dag,
-    retries=3,
-    retry_delay=timedelta(minutes=30),
 )
 
 t1

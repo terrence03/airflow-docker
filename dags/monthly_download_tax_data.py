@@ -38,8 +38,6 @@ t1 = PythonOperator(
     task_id="monthly_download_tax_data",
     python_callable=download_tax_data,
     dag=dag,
-    retries=3,
-    retry_delay=timedelta(minutes=30),
 )
 
 t1

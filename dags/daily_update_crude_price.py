@@ -40,11 +40,7 @@ def update_crude_oil_price():
 
 
 t1 = PythonOperator(
-    task_id="daily_crude_price_update",
-    python_callable=update_crude_oil_price,
-    dag=dag,
-    retries=3,
-    retry_delay=timedelta(minutes=30),
+    task_id="daily_crude_price_update", python_callable=update_crude_oil_price, dag=dag
 )
 
 t1
