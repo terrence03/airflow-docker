@@ -8,7 +8,7 @@ import pandas as pd
 URL = "https://www2.moeaea.gov.tw/oil111/Dealer/GasStations/load"
 now = datetime.now()
 # save_folder = Path("opt/ariflow/downloads/gas_station_namelist")
-save_folder = Path(R"plugins\gas_station")
+save_folder = Path(R"plugins/gas_station")
 log_file = save_folder / "update.log"
 
 
