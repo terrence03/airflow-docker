@@ -68,7 +68,7 @@ class CrudeOilPrice:
         else:
             return None
 
-    def get_daily_data(self, start_date: str = None, end_date: str = None):
+    def get_daily_data(self, start_date: str = None, end_date: str = None) -> pd.DataFrame:
         if all([start_date, end_date]):
             _data = self.__get_data(unit="day", start=start_date, end=end_date)
         elif start_date:
