@@ -18,9 +18,8 @@ class Log:
 
     def write_update_info_to_logger(self, update_date: str, update_status: str):
         """Test the logger"""
-        logger = self.logger
         update_info = f"{update_date} - {update_status}"
-        logger.info(update_info)
+        self.logger.info(update_info)
 
     def get_last_update_date(self):
         """Get the last update date"""

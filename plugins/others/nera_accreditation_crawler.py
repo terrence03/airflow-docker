@@ -6,10 +6,17 @@ import pandas as pd
 import pdfplumber
 
 sys.path.append("/opt/airflow")
-sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
 from plugins.tools.log import Log
 
-save_folder = Path(R"D:\OneDrive\WORK\Projects\airflow-docker\downloads")
+save_folder = Path("/opt/airflow/downloads/nera_accreditation")
+
+if not save_folder.exists():
+    save_folder.mkdir(parents=True)
+if not (save_folder / "pdf").exists():
+    (save_folder / "pdf").mkdir(parents=True)
+if not (save_folder / "csv").exists():
+    (save_folder / "csv").mkdir(parents=True)
+
 log_file = save_folder / "update.log"
 
 
@@ -84,8 +91,8 @@ def pdf_to_csv(_pdf: str, save_path: str) -> pd.DataFrame:
             _data = pd.concat([_data, handle_tables(table)])
 
     _data.reset_index(drop=True, inplace=True)
-    _data["Code"].ffill()
-    _data["Item"].ffill()
+    _data["Code"] = _data["Code"].ffill()
+    _data["Item"] = _data["Item"].ffill()
     _data["Code"] = _data["Code"].str.replace("代碼:\n", "")
     _data["Item"] = _data["Item"].str.replace("\n", "")
     _data["Name"] = _data["Name"].str.replace("檢驗室名稱:", "")
