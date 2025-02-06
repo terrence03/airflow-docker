@@ -81,9 +81,10 @@ class TaxDataCrawler:
     def process_csv(self, csv_file_path: str) -> None:
         csv_dir = Path(csv_file_path).parent
         temp_dir, temp_path = tempfile.mkstemp(dir=csv_dir, text=True)
-        with os.fdopen(temp_dir, "w", newline="", encoding="utf-8") as temp_file, open(
-            csv_file_path, "r", newline="", encoding="utf-8"
-        ) as csv_file:
+        with (
+            os.fdopen(temp_dir, "w", newline="", encoding="utf-8") as temp_file,
+            open(csv_file_path, "r", newline="", encoding="utf-8") as csv_file,
+        ):
             reader = csv.reader(csv_file)
             writer = csv.writer(temp_file)
             writer.writerow(next(reader))  # write header
@@ -111,10 +112,28 @@ def download_tax_data(download_dir: str) -> Path:
     return download_dir_child
 
 
-def write_to_tax_db(db_dir: str, file_dir: str) -> None:
+def write_to_tax_db(db_dir: str, tax_data_dir: str) -> None:
+    """
+    Write tax data to sqlite database.
+
+    Parameters
+    ----------
+    db_dir : str
+        Directory to save the database.
+    tax_data_dir : str
+        Directory where the tax data is saved.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    The tax database will be saved in the `db_dir` directory, and named as `YYYYMMDD_tax.db`.
+    """
     crawler = TaxDataCrawler()
     db_path = crawler.copy_sqlite(db_dir)
-    for file in Path(file_dir).iterdir():
+    for file in Path(tax_data_dir).iterdir():
         if (file.stem in crawler.conf.keys()) and (file.suffix == ".csv"):
             with sqlite3.connect(db_path) as conn:
                 cursor = conn.cursor()
@@ -126,9 +145,18 @@ def write_to_tax_db(db_dir: str, file_dir: str) -> None:
                         reader,
                     )
                     conn.commit()
-            print(f"{file} {crawler.conf[file.stem]["table_name"]} saved to database")
+            print(f"{file} {crawler.conf[file.stem]['table_name']} saved to database")
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        # del the first row
+        cursor.execute("DELETE FROM '1-營業中' WHERE rowid=1")
+        cursor.execute("DELETE FROM '2-停業中' WHERE rowid=1")
+        cursor.execute("DELETE FROM '3-非營業中' WHERE rowid=1")
+        cursor.execute("DELETE FROM '4-非營利事業' WHERE rowid=1")
+        cursor.execute("DELETE FROM '6-各級學校' WHERE rowid=1")
+        conn.commit()
 
 
-# def download_tax_data_and_write_to_db(download_dir: str, db_dir: str) -> None:
-#     download_dir_child = download_tax_data(download_dir)
-#     write_to_tax_db(db_dir, download_dir_child)
+def download_tax_data_and_write_to_db(download_dir: str, db_dir: str) -> None:
+    download_dir_child = download_tax_data(download_dir)
+    write_to_tax_db(db_dir, download_dir_child)
