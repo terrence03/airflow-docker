@@ -14,8 +14,8 @@ if not save_folder.exists():
     save_folder.mkdir(parents=True)
 if not (save_folder / "pdf").exists():
     (save_folder / "pdf").mkdir(parents=True)
-if not (save_folder / "csv").exists():
-    (save_folder / "csv").mkdir(parents=True)
+if not (save_folder / "xlsx").exists():
+    (save_folder / "xlsx").mkdir(parents=True)
 
 log_file = save_folder / "update.log"
 
@@ -79,7 +79,7 @@ def handle_tables(_table: list) -> pd.DataFrame:
     return result
 
 
-def pdf_to_csv(_pdf: str, save_path: str) -> pd.DataFrame:
+def pdf_to_xlsx(_pdf: str, save_path: str) -> pd.DataFrame:
     _pdf = pdfplumber.open(_pdf)
     _data = pd.DataFrame(columns=["Code", "Item", "Name", "Address", "Tel"])
 
@@ -99,7 +99,7 @@ def pdf_to_csv(_pdf: str, save_path: str) -> pd.DataFrame:
     _data["Address"] = _data["Address"].str.replace("檢驗室地址:", "")
     _data["Tel"] = _data["Tel"].str.replace("\n", "")
 
-    _data.to_csv(save_path, index=False, encoding="utf-8-sig")
+    _data.to_excel(save_path, index=False)
 
 
 def main():
@@ -111,8 +111,8 @@ def main():
         pdf_link = get_pdf_link()
         pdf_path = save_folder / "pdf" / f"許可項目機構總表_{update_time}.pdf"
         download_pdf(pdf_link, pdf_path)
-        excel_path = save_folder / "csv" / f"許可項目機構總表_{update_time}.csv"
-        pdf_to_csv(pdf_path, excel_path)
+        xlsx_path = save_folder / "xlsx" / f"許可項目機構總表_{update_time}.xlsx"
+        pdf_to_xlsx(pdf_path, xlsx_path)
         return True
     else:
         log.write_update_info_to_logger(update_time, "no update")
