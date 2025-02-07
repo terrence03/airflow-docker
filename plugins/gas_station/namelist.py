@@ -10,7 +10,11 @@ from plugins.tools.log import Log
 URL = "https://www2.moeaea.gov.tw/oil111/Dealer/GasStations/load"
 now = datetime.now()
 save_folder = Path("opt/ariflow/downloads/gas_station_namelist")
+if not save_folder.exists():
+    save_folder.mkdir(parents=True, exist_ok=True)
 log_file = save_folder / "update.log"
+if not log_file.exists():
+    log_file.touch()
 
 
 def get_data() -> tuple[str, pd.DataFrame]:

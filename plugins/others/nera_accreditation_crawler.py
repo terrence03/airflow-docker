@@ -18,6 +18,8 @@ if not (save_folder / "xlsx").exists():
     (save_folder / "xlsx").mkdir(parents=True)
 
 log_file = save_folder / "update.log"
+if not log_file.exists():
+    log_file.touch()
 
 
 URL = "https://www.nera.gov.tw/zh-tw/LicenceInstitutionList.html"
