@@ -1,9 +1,12 @@
+import sys
 import sqlite3
 import requests
 import pandas as pd
+
+sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
 from plugins.oil_price.moea import CrudeOilPrice
 
-db_path = "data/oilprice.db"
+db_path = R"D:\OneDrive\WORK\Projects\airflow-docker\data\oilprice.db"
 
 
 def check_daily_crude_oil(db_path) -> dict:
@@ -51,40 +54,32 @@ def fix_daily_crude_oil(db_path, info: dict):
         print("No need to fix")
         return
 
-    if info["is_duplicated"]:
-        with sqlite3.connect(db_path) as conn:
-            sql = """
-            DELETE FROM 'Daily.CrudeOil' \
-            WHERE rowid NOT IN (SELECT MIN(rowid) \
-            FROM 'Daily.CrudeOil' GROUP BY date)
-            """
-            conn.execute(sql)
+    with sqlite3.connect(db_path) as conn:
+        df = pd.read_sql("SELECT * FROM 'Daily.CrudeOil'", conn)
 
-        print("Remove duplicated rows")
+        if info["missing_date"]:
+            crude_oil_price = CrudeOilPrice()
+            insert_data = pd.DataFrame()
+            for date in info["missing_date"]:
+                price: pd.DataFrame = crude_oil_price.get_daily_data(
+                    start_date=date, end_date=date
+                )
+                # fix price column dtype
+                price["date"] = price["date"].astype(str)
+                price["wti"] = price["wti"].astype(float)
+                price["brent"] = price["brent"].astype(float)
+                price["dubai"] = price["dubai"].astype(float)
+                price["trade"] = price["trade"].astype(float)
+                insert_data = pd.concat([insert_data, price])
+            df = pd.concat([df, insert_data])
+            print(f"Insert {len(insert_data)} rows")
 
-    if info["missing_date"]:
-        crude_oil_price = CrudeOilPrice()
-        insert_data = pd.DataFrame()
-        for date in info["missing_date"]:
-            price: pd.DataFrame = crude_oil_price.get_daily_data(
-                start_date=date, end_date=date
-            )
-            insert_data = pd.concat([insert_data, price])
+        if info["is_duplicated"]:
+            df = df.drop_duplicates(subset=["date"])
+            print("Remove duplicated rows")
 
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        insert_data.to_sql("temp_1", conn, if_exists="replace", index=False)
-        cursor.execute("INSERT INTO 'Daily.CrudeOil' SELECT * FROM 'temp'")
-        cursor.execute("DROP TABLE 'temp_1'")
-        cursor.execute(
-            "CREATE TABLE 'temp_2' AS SELECT * FROM 'Daily.CrudeOil' ORDER BY date"
-        )
-        cursor.execute("DROP TABLE 'Daily.CrudeOil'")
-        cursor.execute("ALTER TABLE 'temp_2' RENAME TO 'Daily.CrudeOil'")
-        conn.commit()
-        conn.close()
-
-        print(f"Insert {len(insert_data)} rows")
+        df.sort_values("date", inplace=True)
+        df.to_sql("Daily.CrudeOil", conn, if_exists="replace", index=False)
 
 
 def main():
