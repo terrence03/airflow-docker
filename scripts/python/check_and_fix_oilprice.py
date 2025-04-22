@@ -3,10 +3,11 @@ import sqlite3
 import requests
 import pandas as pd
 
-sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
+sys.path.append(R"e:\OneDrive\WORK\Projects\airflow-docker")
 from plugins.oil_price.moea import CrudeOilPrice
+from plugins.oil_price.moea import TownPrice
 
-db_path = R"D:\OneDrive\WORK\Projects\airflow-docker\data\oilprice.db"
+db_path = R"E:\OneDrive\WORK\Projects\oil-market-report\data\oilprice.db"
 
 
 def check_daily_crude_oil(db_path) -> dict:
@@ -82,12 +83,17 @@ def fix_daily_crude_oil(db_path, info: dict):
         df.to_sql("Daily.CrudeOil", conn, if_exists="replace", index=False)
 
 
-def main():
-    check_info = check_daily_crude_oil(db_path)
-    fix_daily_crude_oil(db_path, check_info)
-    with sqlite3.connect(db_path) as conn:
-        conn.execute("VACUUM")
+# def main():
+#     check_info = check_daily_crude_oil(db_path)
+#     fix_daily_crude_oil(db_path, check_info)
+#     with sqlite3.connect(db_path) as conn:
+#         conn.execute("VACUUM")
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
+
+
+df = TownPrice().get_weekly_data(1309)
+with sqlite3.connect(db_path) as conn:
+    df.to_sql("Weekly.Town", conn, if_exists="append", index=False)
