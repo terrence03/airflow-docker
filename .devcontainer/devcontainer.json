@@ -19,17 +19,28 @@
 				"tamasfe.even-better-toml",
 				"mechatroner.rainbow-csv"
 			]
-		}
-	}
+		},
+		"settings": {
+			"terminal.integrated.defaultProfile.linux": "bash"
+		  }
+
+	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [8080],
 
 	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "cat /etc/os-release",
+	"postCreateCommand": "airflow db init && airflow users create --username airflow --firstname Air --lastname Flow --role Admin --email airflow@example.com --password airflow",
+
+	"mounts": [
+		"source=${localWorkspaceFolder}/dags,target=/opt/airflow/dags,type=bind",
+		"source=${localWorkspaceFolder}/src,target=/opt/airflow/src,type=bind"
+	],
+
+	"containerEnv": {"PYTHONPATH": "/opt/airflow"}
 
 	// Configure tool-specific properties.
 	// "customizations": {},

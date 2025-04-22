@@ -1,3 +1,12 @@
-FROM apache/airflow:slim-2.10.5-python3.12
-COPY requirements.txt /
-RUN pip install --no-cache-dir "apache-airflow==${AIRFLOW_VERSION}" -r /requirements.txt
+FROM apache/airflow:2.10.5-python3.12
+
+ENV AIRFLOW_HOME=/opt/airflow
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
+ENV PYTHONPATH="/opt/airflow"
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+WORKDIR /opt/airflow
+
+EXPOSE 8080
