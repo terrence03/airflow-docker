@@ -3,6 +3,7 @@ data/
 downloads/
 export/
 logs/
+scripts/
 .env
 .cfg
 .db
