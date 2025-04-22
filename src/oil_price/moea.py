@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 import requests
 import pandas as pd
 
-sys.path.append("/opt/airflow")
-from plugins.tools.period_config import Week, Month
+# sys.path.append("/opt/airflow")
+from src.tools.period_config import Week, Month
 
 
 class CrudeOilPrice:

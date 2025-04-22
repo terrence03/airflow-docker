@@ -1,11 +1,8 @@
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-
-sys.path.append("/opt/airflow")
-from plugins.tax.main import download_tax_data
+from src.tax.main import download_tax_data
 
 download_dir = Path("/opt/airflow/downloads")
 db_dir = Path("/opt/airflow/data")

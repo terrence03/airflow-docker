@@ -1,11 +1,8 @@
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-
-sys.path.append("/opt/airflow")
-from plugins.others.nera_accreditation_crawler import main
+from src.others.nera_accreditation_crawler import main
 
 down_pdf_path = Path("/opt/airflow/downloads/nera_accreditation/pdf")
 down_csv_path = Path("/opt/airflow/downloads/nera_accreditation/csv")

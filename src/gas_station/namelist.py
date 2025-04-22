@@ -4,8 +4,8 @@ from datetime import datetime
 import requests
 import pandas as pd
 
-sys.path.append("/opt/airflow")
-from plugins.tools.log import Log
+# sys.path.append("/opt/airflow")
+from src.tools.log import Log
 
 URL = "https://www2.moeaea.gov.tw/oil111/Dealer/GasStations/load"
 now = datetime.now()

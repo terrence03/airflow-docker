@@ -1,12 +1,9 @@
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-
-sys.path.append("/opt/airflow")
-from plugins.gas_station.sales import Crawler, DataFlow
-from plugins.tools import sqlite_tools
+from src.gas_station.sales import Crawler, DataFlow
+from src.tools import sqlite_tools
 
 db_path = Path("/opt/airflow/data/gas_station_sales.db")
 download_dir = Path("/opt/airflow/downloads")

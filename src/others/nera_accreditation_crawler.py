@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import pdfplumber
 
-sys.path.append("/opt/airflow")
-from plugins.tools.log import Log
+# sys.path.append("/opt/airflow")
+from src.tools.log import Log
 
 save_folder = Path("/opt/airflow/downloads/nera_accreditation")
 

@@ -1,11 +1,8 @@
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-
-sys.path.append("/opt/airflow")
-from plugins.gas_station.namelist import main
+from src.gas_station.namelist import main
 
 db_path = Path("/opt/airflow/data/oilprice.db")
 

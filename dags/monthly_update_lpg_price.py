@@ -1,20 +1,17 @@
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 import pandas as pd
-
-sys.path.append("/opt/airflow")
-from plugins.lpg_price.moea import get_counties_price, get_towns_price
-from plugins.lpg_price.cpc_fpcc import (
+from src.lpg_price.moea import get_counties_price, get_towns_price
+from src.lpg_price.cpc_fpcc import (
     get_cpc_price_adj,
     get_cpc_asia_price,
     get_cpc_board_price,
     get_fpcc_board_price,
     download_cpc_fpcc_html,
 )
-from plugins.tools import sqlite_tools
+from src.tools import sqlite_tools
 
 db_path = Path("/opt/airflow/data/lpgprice.db")
 # db_path = Path(R"D:\Projects\airflow-docker\data\lpgprice.db")

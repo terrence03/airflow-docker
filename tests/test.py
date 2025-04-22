@@ -4,11 +4,11 @@ from pathlib import Path
 from datetime import timedelta
 import pandas as pd
 
-sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
-from plugins.oil_price.cpc_fpcc import CpcPrice, FpccPrice
-from plugins.oil_price.moea import CrudeOilPrice, AvgPrice, TownPrice, RefPrice
-from plugins.tools import sqlite_tools
-from plugins.tools.period_config import Week
+# sys.path.append(R"D:\OneDrive\WORK\Projects\airflow-docker")
+from src.oil_price.cpc_fpcc import CpcPrice, FpccPrice
+from src.oil_price.moea import CrudeOilPrice, AvgPrice, TownPrice, RefPrice
+from src.tools import sqlite_tools
+from src.tools.period_config import Week
 
 
 # CrudeOilPrice().get_weekly_data()

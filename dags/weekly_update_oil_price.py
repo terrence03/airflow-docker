@@ -1,14 +1,11 @@
-import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 import pandas as pd
-
-sys.path.append("/opt/airflow")
-from plugins.oil_price.cpc_fpcc import CpcPrice, FpccPrice
-from plugins.oil_price.moea import CrudeOilPrice, AvgPrice, TownPrice, RefPrice
-from plugins.tools import sqlite_tools
+from src.oil_price.cpc_fpcc import CpcPrice, FpccPrice
+from src.oil_price.moea import CrudeOilPrice, AvgPrice, TownPrice, RefPrice
+from src.tools import sqlite_tools
 
 db_path = Path("/opt/airflow/data/oilprice.db")
 
