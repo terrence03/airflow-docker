@@ -5,7 +5,7 @@ export/
 logs/
 scripts/
 .env
-.cfg
+airflow.cfg
 .db
 copy.bat
 
