@@ -1,34 +1,155 @@
-from pathlib import Path
-from datetime import datetime, timedelta
+import os
+import pandas as pd
+import pendulum
 from airflow import DAG
+from datetime import timedelta
 from airflow.operators.python import PythonOperator
-from src.gas_station.namelist import main
+from src.gas_station.crawler import CpcCrawler, FpccCrawler, MoeaCrawler
+from src.tools.log import Log
 
-db_path = Path("/opt/airflow/data/oilprice.db")
+moea_log = Log("logs/update_record/gas_station_namelist_by_moea.log")
+cpc_log = Log("logs/update_record/gas_station_namelist_by_cpc.log")
+fpcc_log = Log("logs/update_record/gas_station_namelist_by_fpcc.log")
+
+moea_download_dir = "downloads/gas_station_namelist/moea"
+cpc_download_dir = "downloads/gas_station_namelist/cpc"
+fpcc_download_dir = "downloads/gas_station_namelist/fpcc"
 
 default_args = {
     "email": ["chienhua.hsu@tri.org.tw"],
     "email_on_failure": True,
     "email_on_retry": False,
-    "retries": 2,
-    "retry_delay": timedelta(minutes=30),
+    "retries": 1,
+    "retry_delay": timedelta(minutes=10),
 }
 
+
 dag = DAG(
-    "daily_gas_station_namelist_update",
-    description="Update the gas station namelist daily",
-    schedule="30 8 * * *",
-    start_date=datetime(2024, 6, 15),
+    "update_gas_station_namelist",
+    description="Update the gas station namelist by CPC FPCC and MOEA daily",
+    schedule="35 8 * * *",
+    start_date=pendulum.datetime(2024, 6, 15, tz="Asia/Taipei"),
+    schedule_interval=None,
     catchup=False,
-    tags=["daily", "oil"],
+    tags=["daily"],
     default_args=default_args,
 )
+# ==========CPC DAG==========
+
+
+def is_cpc_update(new_station_ids: list) -> bool:
+    if (not os.path.exists(cpc_download_dir)) or (
+        len(os.listdir(cpc_download_dir)) == 0
+    ):
+        return True
+
+    last_file = sorted([f for f in os.listdir(cpc_download_dir) if f.endswith(".csv")])[
+        -1
+    ]
+    last_df = pd.read_csv(
+        os.path.join(cpc_download_dir, last_file), encoding="utf-8-sig"
+    )
+    last_station_ids = set(last_df["station_id"].tolist())
+    new_station_ids = set(new_station_ids)
+
+    return last_station_ids != new_station_ids
+
+
+def update_cpc() -> None:
+    crawler = CpcCrawler()
+    cpc_data = crawler.crawl()
+    if is_cpc_update(cpc_data["station_id"].tolist()):
+        today = pendulum.now("Asia/Taipei").format("YYYYMMDD")
+        cpc_data.to_csv(
+            os.path.join(cpc_download_dir, f"{today}_cpc.csv"),
+            index=False,
+            encoding="utf-8-sig",
+        )
+        cpc_log.write_update_info_to_logger("update")
+    else:
+        cpc_log.write_update_info_to_logger("no update")
 
 
 t1 = PythonOperator(
-    task_id="daily_gas_station_namelist_update",
-    python_callable=main,
+    task_id="cpc_gas_station_namelist_update",
+    python_callable=update_cpc,
     dag=dag,
 )
 
-t1
+
+# ==========FPCC DAG==========
+
+
+def is_fpcc_update(new_station_ids: list) -> bool:
+    if (not os.path.exists(fpcc_download_dir)) or (
+        len(os.listdir(fpcc_download_dir)) == 0
+    ):
+        return True
+
+    last_file = sorted(
+        [f for f in os.listdir(fpcc_download_dir) if f.endswith(".csv")]
+    )[-1]
+    last_df = pd.read_csv(
+        os.path.join(fpcc_download_dir, last_file), encoding="utf-8-sig"
+    )
+    last_station_ids = set(last_df["station_id"].tolist())
+    new_station_ids = set(new_station_ids)
+
+    return last_station_ids != new_station_ids
+
+
+def update_fpcc() -> None:
+    crawler = FpccCrawler()
+    fpcc_data = crawler.crawl()
+    if is_fpcc_update(fpcc_data["station_id"].tolist()):
+        today = pendulum.now("Asia/Taipei").format("YYYYMMDD")
+        fpcc_data.to_csv(
+            os.path.join(fpcc_download_dir, f"{today}_cpc.csv"),
+            index=False,
+            encoding="utf-8-sig",
+        )
+
+        fpcc_log.write_update_info_to_logger("update")
+    else:
+        fpcc_log.write_update_info_to_logger("no update")
+
+
+t2 = PythonOperator(
+    task_id="fpcc_gas_station_namelist_update",
+    python_callable=update_fpcc,
+    dag=dag,
+)
+
+# ==========Moea DAG==========
+
+
+def is_moea_update(update_time: str) -> bool:
+    last_update_time = moea_log.get_last_update_date()
+    if last_update_time == "":
+        return True
+    return update_time != last_update_time
+
+
+def update_moea() -> None:
+    crawler = MoeaCrawler()
+    update_time, stations = crawler.crawl()
+    if is_moea_update(update_time):
+        today = pendulum.now("Asia/Taipei").format("YYYYMMDD")
+        stations.to_csv(
+            os.path.join(moea_download_dir, f"{today}_油價管理與分析系統.csv"),
+            index=False,
+            encoding="utf-8-sig",
+        )
+        moea_log.write_update_info_to_logger("update", update_time)
+    else:
+        moea_log.write_update_info_to_logger("no update", update_time)
+
+
+t3 = PythonOperator(
+    task_id="moea_gas_station_namelist_update",
+    python_callable=update_moea,
+    dag=dag,
+)
+
+
+t1 >> t2 >> t3
