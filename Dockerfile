@@ -34,6 +34,6 @@ ENV AIRFLOW_HOME=/opt/airflow
 ENV PYTHONPATH=/opt/airflow
 
 # 啟動指令
-ENTRYPOINT ["/opt/airflow/scripts/entrypoint.sh"]
+# ENTRYPOINT ["/opt/airflow/scripts/entrypoint.sh"]
 
 EXPOSE 8080
