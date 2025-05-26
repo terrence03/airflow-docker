@@ -7,9 +7,9 @@ from airflow.operators.python import PythonOperator
 from src.gas_station.crawler import CpcCrawler, FpccCrawler, MoeaCrawler
 from src.tools.log import Log
 
-moea_log = Log("logs/update_record/gas_station_namelist_by_moea.log")
-cpc_log = Log("logs/update_record/gas_station_namelist_by_cpc.log")
-fpcc_log = Log("logs/update_record/gas_station_namelist_by_fpcc.log")
+moea_log = Log("logs/crawler_logs/gas_station_namelist_by_moea.log")
+cpc_log = Log("logs/crawler_logs/gas_station_namelist_by_cpc.log")
+fpcc_log = Log("logs/crawler_logs/gas_station_namelist_by_fpcc.log")
 
 moea_download_dir = "downloads/gas_station_namelist/moea"
 cpc_download_dir = "downloads/gas_station_namelist/cpc"
@@ -29,7 +29,7 @@ dag = DAG(
     description="Update the gas station namelist by CPC FPCC and MOEA daily",
     schedule="35 8 * * *",
     start_date=pendulum.datetime(2024, 6, 15, tz="Asia/Taipei"),
-    schedule_interval=None,
+    # schedule_interval=None,
     catchup=False,
     tags=["daily"],
     default_args=default_args,
