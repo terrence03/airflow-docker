@@ -7,13 +7,13 @@ from airflow.operators.python import PythonOperator
 from src.gas_station.crawler import CpcCrawler, FpccCrawler, MoeaCrawler
 from src.tools.log import Log
 
-moea_log = Log("logs/crawler_logs/gas_station_namelist_by_moea.log")
-cpc_log = Log("logs/crawler_logs/gas_station_namelist_by_cpc.log")
-fpcc_log = Log("logs/crawler_logs/gas_station_namelist_by_fpcc.log")
+cpc_log = Log("data/crawler_logs/gas_station_namelist_by_cpc.log")
+fpcc_log = Log("data/crawler_logs/gas_station_namelist_by_fpcc.log")
+moea_log = Log("data/crawler_logs/gas_station_namelist_by_moea.log")
 
-moea_download_dir = "downloads/gas_station_namelist/moea"
 cpc_download_dir = "downloads/gas_station_namelist/cpc"
 fpcc_download_dir = "downloads/gas_station_namelist/fpcc"
+moea_download_dir = "downloads/gas_station_namelist/moea"
 
 default_args = {
     "email": ["chienhua.hsu@tri.org.tw"],

@@ -7,7 +7,7 @@ from src.oil_price.cpc_fpcc import CpcPrice, FpccPrice
 from src.oil_price.moea import CrudeOilPrice, AvgPrice, TownPrice, RefPrice
 from src.tools import sqlite_tools
 
-db_path = Path("/opt/airflow/data/oilprice.db")
+db_path = Path("data/oilprice.db")
 
 default_args = {
     "email": ["chienhua.hsu@tri.org.tw"],

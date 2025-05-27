@@ -172,7 +172,7 @@ def get_fpcc_board_price() -> list[dict]:
         The latest LPG price from FPCC website
     """
     soup = get_soup(URL["FPCC_BOARD"]["url"])
-    block = soup.find_all("div", attrs={"class": "price-block"})[2]
+    block = soup.find_all("div", attrs={"class": "price-block"})[0]
 
     update_date = block.find("p").get_text("\n", "<br>").split(" ")[1]
     update_date = datetime.strptime(update_date, r"%Y年%m月%d日")

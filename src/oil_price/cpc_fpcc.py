@@ -196,8 +196,8 @@ class FpccPrice:
 
     def get_board_price(self) -> list[dict]:
         soup = self.get_soup(self.url)
-        retail = soup.find_all("div", attrs={"class": "price-block"})[0]
-        wholesale = soup.find_all("div", attrs={"class": "price-block"})[1]
+        retail = soup.find_all("div", attrs={"class": "price-block"})[4]
+        wholesale = soup.find_all("div", attrs={"class": "price-block"})[5]
         update_date = retail.find("p").get_text("\n", "<br>").split(" ")[1]
         update_date = datetime.strptime(update_date, r"%Y年%m月%d日").strftime(
             r"%Y-%m-%d"
