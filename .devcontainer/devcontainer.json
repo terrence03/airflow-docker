@@ -46,7 +46,9 @@
 		"source=${localWorkspaceFolder}/logs,target=/opt/airflow/logs,type=bind",
 		"source=${localWorkspaceFolder}/config,target=/opt/airflow/logs,type=bind",
 		"source=${localWorkspaceFolder}/src,target=/opt/airflow/src,type=bind,consistency=cached",
-		"source=${localWorkspaceFolder}/downloads,target=/opt/airflow/downloads,type=bind,consistency=cached"
+		"source=${localWorkspaceFolder}/downloads,target=/opt/airflow/downloads,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/data,target=/opt/airflow/data,type=bind",
+		"source=${localWorkspaceFolder}/exports,target=/opt/airflow/exports,type=bind"
 	],
 
 	"remoteUser": "airflow"
