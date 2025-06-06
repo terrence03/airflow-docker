@@ -1,12 +1,12 @@
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import timedelta, datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from src.others.nera_accreditation_crawler import (
     get_update_date,
     get_pdf_link,
     download_pdf,
-    pdf_to_xlsx,
+    # pdf_to_xlsx,
 )
 from src.tools.log import Log
 
@@ -55,8 +55,8 @@ def main():
         pdf_link = get_pdf_link()
         pdf_path = save_folder / "pdf" / f"許可項目機構總表_{update_time}.pdf"
         download_pdf(pdf_link, pdf_path)
-        xlsx_path = save_folder / "xlsx" / f"許可項目機構總表_{update_time}.xlsx"
-        pdf_to_xlsx(pdf_path, xlsx_path)
+        # xlsx_path = save_folder / "xlsx" / f"許可項目機構總表_{update_time}.xlsx"
+        # pdf_to_xlsx(pdf_path, xlsx_path)
         return True
     else:
         log.write_update_info_to_logger(update_time, "no update")

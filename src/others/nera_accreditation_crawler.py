@@ -1,5 +1,3 @@
-import sys
-from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -33,7 +31,7 @@ def download_pdf(pdf_link: str, download_path: str) -> str:
                 file.write(chunk)
 
 
-def handle_table(_table: list) -> pd.DataFrame:
+def process_table(_table: list) -> pd.DataFrame:
     _name = []
     _addr = []
     _tel = []
@@ -58,13 +56,6 @@ def handle_table(_table: list) -> pd.DataFrame:
     )
 
 
-def handle_tables(_table: list) -> pd.DataFrame:
-    result = pd.DataFrame()
-    for _t in _table:
-        result = pd.concat([result, handle_table([_t])])
-    return result
-
-
 def pdf_to_xlsx(_pdf: str, save_path: str) -> pd.DataFrame:
     _pdf = pdfplumber.open(_pdf)
     _data = pd.DataFrame(columns=["Code", "Item", "Name", "Address", "Tel"])
@@ -72,9 +63,11 @@ def pdf_to_xlsx(_pdf: str, save_path: str) -> pd.DataFrame:
     for page in _pdf.pages:
         table = page.extract_tables()
         if len(table) == 1:
-            _data = pd.concat([_data, handle_table(table)])
+            _data = pd.concat([_data, process_table(table)])
         else:
-            _data = pd.concat([_data, handle_tables(table)])
+            _data = pd.DataFrame()
+            for _t in table:
+                _data = pd.concat([_data, process_table([_t])])
 
     _data.reset_index(drop=True, inplace=True)
     _data["Code"] = _data["Code"].ffill()
