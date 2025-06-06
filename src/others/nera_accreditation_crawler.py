@@ -5,22 +5,6 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import pdfplumber
 
-# sys.path.append("/opt/airflow")
-from src.tools.log import Log
-
-save_folder = Path("/opt/airflow/downloads/nera_accreditation")
-
-if not save_folder.exists():
-    save_folder.mkdir(parents=True)
-if not (save_folder / "pdf").exists():
-    (save_folder / "pdf").mkdir(parents=True)
-if not (save_folder / "xlsx").exists():
-    (save_folder / "xlsx").mkdir(parents=True)
-
-log_file = save_folder / "update.log"
-if not log_file.exists():
-    log_file.touch()
-
 
 URL = "https://www.nera.gov.tw/zh-tw/LicenceInstitutionList.html"
 
@@ -102,24 +86,3 @@ def pdf_to_xlsx(_pdf: str, save_path: str) -> pd.DataFrame:
     _data["Tel"] = _data["Tel"].str.replace("\n", "")
 
     _data.to_excel(save_path, index=False)
-
-
-def main():
-    log = Log(log_file)
-    update_time = get_update_date()
-    last_update_date = log.get_last_update_date()
-    if update_time != last_update_date:
-        log.write_update_info_to_logger(update_time, "update")
-        pdf_link = get_pdf_link()
-        pdf_path = save_folder / "pdf" / f"許可項目機構總表_{update_time}.pdf"
-        download_pdf(pdf_link, pdf_path)
-        xlsx_path = save_folder / "xlsx" / f"許可項目機構總表_{update_time}.xlsx"
-        pdf_to_xlsx(pdf_path, xlsx_path)
-        return True
-    else:
-        log.write_update_info_to_logger(update_time, "no update")
-    return False
-
-
-if __name__ == "__main__":
-    main()
