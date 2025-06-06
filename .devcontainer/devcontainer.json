@@ -28,7 +28,9 @@
 			"extensions": [
 				"tamasfe.even-better-toml",
 				"ms-python.python",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"GitHub.copilot",
+				"ms-toolsai.jupyter"
 			],
 		"settings": {"terminal.integrated.defaultProfile.linux": "bash"}
 		}
