@@ -65,9 +65,13 @@ def update_cpc() -> None:
             index=False,
             encoding="utf-8-sig",
         )
-        cpc_log.write_update_info_to_logger("update", pendulum.today("Asia/Taipei"))
+        cpc_log.write_update_info_to_logger(
+            "update", pendulum.today("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")
+        )
     else:
-        cpc_log.write_update_info_to_logger("no update", pendulum.today("Asia/Taipei"))
+        cpc_log.write_update_info_to_logger(
+            "no update", pendulum.today("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")
+        )
 
 
 t1 = PythonOperator(
@@ -109,9 +113,13 @@ def update_fpcc() -> None:
             encoding="utf-8-sig",
         )
 
-        fpcc_log.write_update_info_to_logger("update", pendulum.today("Asia/Taipei"))
+        fpcc_log.write_update_info_to_logger(
+            "update", pendulum.today("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")
+        )
     else:
-        fpcc_log.write_update_info_to_logger("no update", pendulum.today("Asia/Taipei"))
+        fpcc_log.write_update_info_to_logger(
+            "no update", pendulum.today("Asia/Taipei").format("YYYY-MM-DD HH:mm:ss")
+        )
 
 
 t2 = PythonOperator(
