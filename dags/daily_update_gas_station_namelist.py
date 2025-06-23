@@ -25,7 +25,7 @@ default_args = {
 
 
 dag = DAG(
-    "update_gas_station_namelist",
+    "daily_update_gas_station_namelist",
     description="Update the gas station namelist by CPC FPCC and MOEA daily",
     schedule="35 8 * * *",
     start_date=pendulum.datetime(2024, 6, 15, tz="Asia/Taipei"),
@@ -37,7 +37,7 @@ dag = DAG(
 # ==========CPC DAG==========
 
 
-def is_cpc_update(new_station_ids: list) -> bool:
+def check_cpc_update_by_namelist(new_station_ids: list) -> bool:
     if (not os.path.exists(cpc_download_dir)) or (
         len(os.listdir(cpc_download_dir)) == 0
     ):
@@ -58,16 +58,16 @@ def is_cpc_update(new_station_ids: list) -> bool:
 def update_cpc() -> None:
     crawler = CpcCrawler()
     cpc_data = crawler.crawl()
-    if is_cpc_update(cpc_data["station_id"].tolist()):
+    if check_cpc_update_by_namelist(cpc_data["station_id"].tolist()):
         today = pendulum.now("Asia/Taipei").format("YYYYMMDD")
         cpc_data.to_csv(
             os.path.join(cpc_download_dir, f"{today}_cpc.csv"),
             index=False,
             encoding="utf-8-sig",
         )
-        cpc_log.write_update_info_to_logger("update")
+        cpc_log.write_update_info_to_logger("update", pendulum.today("Asia/Taipei"))
     else:
-        cpc_log.write_update_info_to_logger("no update")
+        cpc_log.write_update_info_to_logger("no update", pendulum.today("Asia/Taipei"))
 
 
 t1 = PythonOperator(
@@ -80,7 +80,7 @@ t1 = PythonOperator(
 # ==========FPCC DAG==========
 
 
-def is_fpcc_update(new_station_ids: list) -> bool:
+def check_fpcc_update_by_namelist(new_station_ids: list) -> bool:
     if (not os.path.exists(fpcc_download_dir)) or (
         len(os.listdir(fpcc_download_dir)) == 0
     ):
@@ -101,7 +101,7 @@ def is_fpcc_update(new_station_ids: list) -> bool:
 def update_fpcc() -> None:
     crawler = FpccCrawler()
     fpcc_data = crawler.crawl()
-    if is_fpcc_update(fpcc_data["station_id"].tolist()):
+    if check_fpcc_update_by_namelist(fpcc_data["station_id"].tolist()):
         today = pendulum.now("Asia/Taipei").format("YYYYMMDD")
         fpcc_data.to_csv(
             os.path.join(fpcc_download_dir, f"{today}_cpc.csv"),
@@ -109,9 +109,9 @@ def update_fpcc() -> None:
             encoding="utf-8-sig",
         )
 
-        fpcc_log.write_update_info_to_logger("update")
+        fpcc_log.write_update_info_to_logger("update", pendulum.today("Asia/Taipei"))
     else:
-        fpcc_log.write_update_info_to_logger("no update")
+        fpcc_log.write_update_info_to_logger("no update", pendulum.today("Asia/Taipei"))
 
 
 t2 = PythonOperator(
@@ -123,7 +123,7 @@ t2 = PythonOperator(
 # ==========Moea DAG==========
 
 
-def is_moea_update(update_time: str) -> bool:
+def check_moea_update_by_update_time(update_time: str) -> bool:
     last_update_time = moea_log.get_last_update_date()
     if last_update_time == "":
         return True
@@ -133,7 +133,7 @@ def is_moea_update(update_time: str) -> bool:
 def update_moea() -> None:
     crawler = MoeaCrawler()
     update_time, stations = crawler.crawl()
-    if is_moea_update(update_time):
+    if check_moea_update_by_update_time(update_time):
         today = pendulum.now("Asia/Taipei").format("YYYYMMDD")
         stations.to_csv(
             os.path.join(moea_download_dir, f"{today}_油價管理與分析系統.csv"),
