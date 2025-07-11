@@ -20,7 +20,6 @@ dag = DAG(
     description="Update the crude oil price daily",
     schedule="30 8 * * *",
     start_date=datetime(2024, 6, 15),
-    schedule_interval=None,
     catchup=False,
     tags=["daily"],
     default_args=default_args,
